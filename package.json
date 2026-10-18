@@ -3,7 +3,7 @@
   "description": "Kysely dialect for Cloudflare D1",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
