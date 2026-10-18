@@ -31,10 +31,7 @@ describe('D1Dialect', () => {
   });
 
   it('inserts a row and returns insertId', async () => {
-    const result = await db
-      .insertInto('users')
-      .values({ name: 'Alice', email: 'alice@example.com' })
-      .executeTakeFirstOrThrow();
+    const result = await db.insertInto('users').values({ name: 'Alice', email: 'alice@example.com' }).executeTakeFirstOrThrow();
 
     expect(result.insertId).toBe(1n);
   });
@@ -67,10 +64,7 @@ describe('D1Dialect', () => {
   it('deletes a row and returns numAffectedRows', async () => {
     await db.insertInto('users').values({ name: 'Alice', email: 'alice@example.com' }).execute();
 
-    const result = await db
-      .deleteFrom('users')
-      .where('email', '=', 'alice@example.com')
-      .executeTakeFirstOrThrow();
+    const result = await db.deleteFrom('users').where('email', '=', 'alice@example.com').executeTakeFirstOrThrow();
 
     expect(result.numDeletedRows).toBe(1n);
 

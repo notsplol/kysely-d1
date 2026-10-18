@@ -37,8 +37,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "test": "vitest run",
-    "check": "prettier --check src/ example/",
-    "format": "prettier --write src/ example/"
+    "check": "prettier --check src/ example/ test/",
+    "format": "prettier --write src/ example/ test/"
   },
   "peerDependencies": {
     "kysely": ">=0.27.0"
