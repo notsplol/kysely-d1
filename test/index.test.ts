@@ -119,4 +119,28 @@ describe('D1Dialect', () => {
     const rows = await db.selectFrom('users').selectAll().execute();
     expect(rows).toHaveLength(0);
   });
+
+  it('runs a query while another connection is still held', async () => {
+    // Kysely >= 0.29 puts every query behind one mutex when the adapter reports a single connection. On Workers, a
+    // request cancelled while holding it never releases it and every later query waits forever. Holding a
+    // connection open here stands in for that request.
+    let acquired!: () => void;
+    const isAcquired = new Promise<void>((resolve) => (acquired = resolve));
+    let release!: () => void;
+    const released = new Promise<void>((resolve) => (release = resolve));
+    const holder = db.connection().execute(async () => {
+      acquired();
+      await released;
+    });
+
+    try {
+      await isAcquired;
+      const answer = sql<{ one: number }>`SELECT 1 AS one`.execute(db).then((result) => result.rows[0]?.one);
+      const timedOut = new Promise<'timed out'>((resolve) => setTimeout(() => resolve('timed out'), 1000));
+      expect(await Promise.race([answer, timedOut])).toBe(1);
+    } finally {
+      release();
+      await holder;
+    }
+  });
 });
